@@ -20,9 +20,11 @@ jobs:
 
     - name: Sync Changes to PythonAnywhere
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
       run: |
-        # Log into PythonAnywhere (ensure you have your username and password or token)
-        sshpass -p ${{ secrets.PYTHONANYWHERE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com "
-          cd /Komyuniti && git pull origin main
+        sshpass -p "${{ secrets.PYTHONANYWHERE_PASSWORD }}" ssh -o StrictHostKeyChecking=no "${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com" "
+        cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/Komyuniti &&
+        git pull origin main
         "
+
