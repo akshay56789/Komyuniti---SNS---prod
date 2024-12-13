@@ -13,16 +13,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Update PythonAnywhere Files via HTTPS
+      - name: Sync Changes Using PythonAnywhere API
         env:
           PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
-          PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
-          GITHUB_PAT: ${{ secrets.GH_TOKEN}}
+          PYTHONANYWHERE_API_TOKEN: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
+          GITHUB_PAT: ${{ secrets.GH_TOKEN }}
         run: |
-          echo "Syncing changes to PythonAnywhere via HTTPS"
-
-          curl -u $PYTHONANYWHERE_USERNAME:$PYTHONANYWHERE_PASSWORD ssh.pythonanywhere.com <<EOF
-          cd /home/$PYTHONANYWHERE_USERNAME/your_project_directory &&
-          git pull https://$GITHUB_PAT@github.com/akshay56789/Komyuniti---SNS---prod.git main --no-edit
-          EOF
-
+          echo "Triggering update via PythonAnywhere API"
+          curl -X POST https://www.pythonanywhere.com/api/v0/user/$PYTHONANYWHERE_USERNAME/files/path/home/$PYTHONANYWHERE_USERNAME/Komyuniti/ \
+          -H "Authorization: Token $PYTHONANYWHERE_API_TOKEN" \
+          -d "command=cd /home/$PYTHONANYWHERE_USERNAME/Komyuniti && git pull https://$GITHUB_PAT@github.com/akshay56789/Komyuniti---SNS---prod.git main --no-edit"
