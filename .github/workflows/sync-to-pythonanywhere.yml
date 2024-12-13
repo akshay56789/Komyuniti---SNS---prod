@@ -13,18 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install SSHPass
-        run: sudo apt-get install -y sshpass
-
       - name: Update PythonAnywhere Files via HTTPS
         env:
           PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
           PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
-          GITHUB_PAT: ${{ secrets.GH_TOKEN }}
+          GITHUB_PAT: ${{ secrets.GH_TOKEN}}
         run: |
-          echo "Pulling changes on PythonAnywhere"
-          sshpass -p "$PYTHONANYWHERE_PASSWORD" ssh -o StrictHostKeyChecking=no "$PYTHONANYWHERE_USERNAME@ssh.pythonanywhere.com" "
-            cd /home/$PYTHONANYWHERE_USERNAME/Komyuniti &&
-            git remote set-url origin https://$GITHUB_PAT@github.com/akshay56789/Komyuniti---SNS---prod.git &&
-            git pull origin main
-          "
+          echo "Syncing changes to PythonAnywhere via HTTPS"
+
+          curl -u $PYTHONANYWHERE_USERNAME:$PYTHONANYWHERE_PASSWORD ssh.pythonanywhere.com <<EOF
+          cd /home/$PYTHONANYWHERE_USERNAME/your_project_directory &&
+          git pull https://$GITHUB_PAT@github.com/akshay56789/Komyuniti---SNS---prod.git main --no-edit
+          EOF
+
