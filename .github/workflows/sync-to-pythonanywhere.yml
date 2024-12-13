@@ -23,10 +23,10 @@ jobs:
     # Step 3: Push Changes to PythonAnywhere
     - name: Push changes to PythonAnywhere
       env:
-        PA_USER: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        #PA_USER: ${{ secrets.PYTHONANYWHERE_USERNAME }}
         GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git remote set-url origin https://$PA_USER:${{ secrets.PYTHONANYWHERE_PAT }}@github.com/akshay56789/Komyuniti---SNS---prod.git
+        git remote set-url origin https://{{ secrets.GITHUB_PAT }}@github.com/akshay56789/Komyuniti---SNS---prod.git
         git pull origin main --no-edit
         git push origin main
 
