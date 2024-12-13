@@ -6,25 +6,25 @@ on:
       - main
 
 jobs:
-  sync:
+  update-pythonanywhere:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code from GitHub
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Git for PythonAnywhere
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+      - name: Install SSHPass
+        run: sudo apt-get install -y sshpass
 
-    - name: Sync Changes to PythonAnywhere
-      env:
-        PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
-        PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
-      run: |
-        sshpass -p "${{ secrets.PYTHONANYWHERE_PASSWORD }}" ssh -o StrictHostKeyChecking=no "${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com" "
-        cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/Komyuniti &&
-        git pull origin main
-        "
-
+      - name: Update PythonAnywhere Files via HTTPS
+        env:
+          PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+          PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
+          GITHUB_PAT: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "Pulling changes on PythonAnywhere"
+          sshpass -p "$PYTHONANYWHERE_PASSWORD" ssh -o StrictHostKeyChecking=no "$PYTHONANYWHERE_USERNAME@ssh.pythonanywhere.com" "
+            cd /home/$PYTHONANYWHERE_USERNAME/Komyuniti &&
+            git remote set-url origin https://$GITHUB_PAT@github.com/akshay56789/Komyuniti---SNS---prod.git &&
+            git pull origin main
+          "
